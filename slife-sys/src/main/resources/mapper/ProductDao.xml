@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.slife.dao.ProductDao">
+
+  <resultMap id="ProductResultMap" type="com.slife.entity.Product" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_id" property="createId" jdbcType="BIGINT" />
+    <result column="update_id" property="updateId" jdbcType="BIGINT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="VARCHAR" />
+    <result column="pro_no" property="proNo" jdbcType="VARCHAR" />
+    <result column="pro_name" property="proName" jdbcType="VARCHAR" />
+    <result column="pro_util" property="proUtil" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="specifications" property="specifications" jdbcType="VARCHAR" />
+    <result column="material" property="material" jdbcType="VARCHAR" />
+    <result column="models" property="models" jdbcType="VARCHAR" />
+    <result column="image_no" property="imageNo" jdbcType="VARCHAR" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="file_url" property="fileUrl" jdbcType="VARCHAR" />
+    <result column="in_price" property="inPrice" jdbcType="DOUBLE" />
+    <result column="out_price" property="outPrice" jdbcType="DOUBLE" />
+    <result column="category_id" property="categoryId" jdbcType="BIGINT" />
+    <result column="relation" property="relation" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <select id="selectPieceByToolsId" resultMap="ProductResultMap" >
+    select  p.id, p.create_id, p.update_id, p.create_date, p.update_date, p.remark, p.del_flag, p.pro_no, p.pro_name, 
+	    p.pro_util, p.description, p.specifications, p.material, p.models, p.image_no, p.image_url, p.file_url, 
+	    p.in_price, p.out_price, p.category_id, p.relation, p.type, p.barcode
+	from 
+		t_product p LEFT JOIN t_product_rel pr on p.id = pr.piece_id
+	where p.del_flag = 'Y' and pr.tool_id = #{toolId}
+  </select>
+  
+  <select id="selectToolsByPieceId" resultMap="ProductResultMap" parameterType="java.lang.Long" >
+    select  p.id, p.create_id, p.update_id, p.create_date, p.update_date, p.remark, p.del_flag, p.pro_no, p.pro_name, 
+	    p.pro_util, p.description, p.specifications, p.material, p.models, p.image_no, p.image_url, p.file_url, 
+	    p.in_price, p.out_price, p.category_id, p.relation, p.type, p.barcode
+	from 
+		t_product p LEFT JOIN t_product_rel pr on p.id = pr.tool_id
+	where p.del_flag = 'Y' and pr.piece_id = #{pieceId}
+  </select>
+  
+  <select id="selectProductByCategory" resultMap="ProductResultMap" parameterType="java.lang.Long" >
+    select  p.id, p.create_id, p.update_id, p.create_date, p.update_date, p.remark, p.del_flag, p.pro_no, p.pro_name, 
+	    p.pro_util, p.description, p.specifications, p.material, p.models, p.image_no, p.image_url, p.file_url, 
+	    p.in_price, p.out_price, p.category_id, p.relation, p.type, p.barcode
+	from 
+		t_product p where p.category_id = #{categoryId}
+  </select>
+  
+  <delete id="deleteRelByToolId" parameterType="java.lang.Long" >
+    delete from t_product_rel
+    where tool_id = #{toolId}
+  </delete>
+  
+  <delete id="deleteRelByPieceId" parameterType="java.lang.Long" >
+    delete from t_product_rel
+    where piece_id = #{pieceId}
+  </delete>
+  
+  <insert id="insertProductRel" parameterType="com.slife.entity.ProductRel" >
+    insert into t_product_rel (tool_id, piece_id, type, remark)
+    values (#{toolId}, #{pieceId}, #{type}, #{remark})
+  </insert>
+
+
+</mapper>
